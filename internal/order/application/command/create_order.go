@@ -7,13 +7,15 @@ import (
 	"github.com/jorgeAM/grpc-kata-order-service/pkg/model"
 )
 
+type Item struct {
+	ProductCode string  `json:"product_code"`
+	Quantity    int     `json:"quantity"`
+	UnitPrice   float64 `json:"unit_price"`
+}
+
 type CreateOrderCommand struct {
 	CustomerID string `json:"customer_id"`
-	Items      []struct {
-		ProductCode string  `json:"product_code"`
-		Quantity    int     `json:"quantity"`
-		UnitPrice   float64 `json:"unit_price"`
-	} `json:"items"`
+	Items      []Item `json:"items"`
 }
 
 type CreateOrder struct {
