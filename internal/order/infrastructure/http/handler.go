@@ -19,11 +19,12 @@ func CreateOrder(_ *config.Config, deps *config.Dependencies) http.HandlerFunc {
 			return
 		}
 
-		if err := srv.Exec(r.Context(), &body); err != nil {
+		res, err := srv.Exec(r.Context(), &body)
+		if err != nil {
 			response.InternalServerErr(w, "INTERNAL_ERROR", err.Error())
 			return
 		}
 
-		response.OK(w, "order created successfully")
+		response.OK(w, res)
 	}
 }

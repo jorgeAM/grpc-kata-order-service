@@ -28,10 +28,10 @@ func NewCreateOrder(orderRepository domain.OrderRepository) *CreateOrder {
 	}
 }
 
-func (c *CreateOrder) Exec(ctx context.Context, cmd *CreateOrderCommand) error {
+func (c *CreateOrder) Exec(ctx context.Context, cmd *CreateOrderCommand) (string, error) {
 	customerID, err := model.NewID(cmd.CustomerID)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	order := domain.NewOrder(customerID)
@@ -40,5 +40,9 @@ func (c *CreateOrder) Exec(ctx context.Context, cmd *CreateOrderCommand) error {
 		order.AddItem(domain.NewOrderItem(order.ID, item.ProductCode, item.Quantity, item.UnitPrice))
 	}
 
-	return c.orderRepository.Save(ctx, order)
+	if err := c.orderRepository.Save(ctx, order); err != nil {
+		return "", err
+	}
+
+	return order.ID.String(), nil
 }
