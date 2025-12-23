@@ -14,6 +14,8 @@ A production-ready Golang order management service built with clean architecture
 - **Configuration Management**: Type-safe environment variable loading with defaults and validation
 - **Logging**: Structured logging with Zap integration and context-aware request tracking
 - **HTTP Routing**: Chi v5 router with comprehensive middleware stack
+- **gRPC Server**: High-performance gRPC API with protocol buffer definitions and reflection support
+- **Dual Protocol Support**: Both HTTP REST and gRPC APIs running concurrently in the same binary
 - **Database Integration**: PostgreSQL with `sqlx` and `goqu` query builder for type-safe SQL
 - **Migration System**: Database migrations using golang-migrate with up/down support
 
@@ -110,6 +112,7 @@ A production-ready Golang order management service built with clean architecture
     APP_ENV=local
     APP_NAME=grpc-kata-order-service
     PORT=8080
+    GRPC_PORT=9090
 
     # Database Configuration
     POSTGRES_HOST=localhost
@@ -133,7 +136,7 @@ A production-ready Golang order management service built with clean architecture
     ```
 
 5.  **Run the application:**
-    Start the server:
+    Start both HTTP and gRPC servers:
 
     ```sh
     make run
@@ -145,21 +148,87 @@ A production-ready Golang order management service built with clean architecture
     go run cmd/app/main.go
     ```
 
+    The application will start both servers concurrently:
+
+    - HTTP Server: `http://localhost:8080`
+    - gRPC Server: `localhost:9090`
+
 ## API Endpoints
 
-### Health Check
+### HTTP REST API
+
+#### Health Check
 
 - `GET /health` - Health check endpoint
 
-### Order Management
+#### Order Management
 
 - `POST /api/v1/orders` - Create a new order
 
-**Create Order Request:**
+### gRPC API
+
+The service provides a gRPC API alongside the HTTP REST API. Both servers run concurrently in the same binary.
+
+#### gRPC Service Definition
+
+- **Service**: `OrderService`
+- **Method**: `CreateOrder`
+- **Port**: `9090` (configurable via `GRPC_PORT` environment variable)
+
+#### Testing gRPC API
+
+You can test the gRPC server using `grpcurl`:
+
+```sh
+# Install grpcurl (if not already installed)
+go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+
+# Test CreateOrder method
+grpcurl -plaintext \
+-d '{
+  "user_id": "550e8400-e29b-41d4-a716-446655440011",
+  "items": [
+    {
+      "product_code": "prod-001",
+      "quantity": 4,
+      "unit_price": 12
+    }
+  ]
+}' \
+localhost:9090 OrderService/Create
+
+# List available services (reflection enabled in local environment)
+grpcurl -plaintext localhost:9090 list
+
+# Describe the OrderService
+grpcurl -plaintext localhost:9090 describe OrderService
+```
+
+**Create Order Request (HTTP REST):**
 
 ```json
 {
   "customer_id": "550e8400-e29b-41d4-a716-446655440000",
+  "items": [
+    {
+      "product_code": "PROD-001",
+      "quantity": 2,
+      "unit_price": 29.99
+    },
+    {
+      "product_code": "PROD-002",
+      "quantity": 1,
+      "unit_price": 49.99
+    }
+  ]
+}
+```
+
+**Create Order Request (gRPC):**
+
+```json
+{
+  "user_id": "550e8400-e29b-41d4-a716-446655440000",
   "items": [
     {
       "product_code": "PROD-001",
@@ -307,6 +376,7 @@ url, err := signer.GeneratePresignedURL(ctx, "file.jpg", storage.JPEG)
 ```
 ├── cmd/app/                    # Application entry point
 │   ├── main.go                # Main application file with graceful shutdown
+│   ├── grpc.go                # gRPC server configuration and startup
 │   └── router.go              # HTTP router configuration and middleware setup
 ├── internal/order/              # Order domain module (clean architecture)
 │   ├── application/            # Use cases (commands and queries)
@@ -316,8 +386,9 @@ url, err := signer.GeneratePresignedURL(ctx, "file.jpg", storage.JPEG)
 │   │   ├── order.go           # Order aggregate root
 │   │   ├── order_item.go      # Order item entity
 │   │   └── status.go          # Order status value object
-│   ├── infrastructure/        # External concerns (HTTP handlers, persistence)
+│   ├── infrastructure/        # External concerns (HTTP handlers, persistence, gRPC)
 │   │   ├── http/              # HTTP handlers
+│   │   ├── grpc/              # gRPC server implementation
 │   │   └── persistence/       # Database repositories
 │   └── mock/                  # Generated mocks for testing
 ├── pkg/                       # Reusable packages (15+ utilities)
@@ -352,6 +423,7 @@ url, err := signer.GeneratePresignedURL(ctx, "file.jpg", storage.JPEG)
 
 - **Go 1.25.4** - Latest Go version
 - **Chi v5** - Lightweight HTTP router
+- **gRPC** - High-performance RPC framework with protocol buffers
 - **Zap** - Structured logging
 - **sqlx + goqu** - Database operations and query building
 - **AWS SDK v2** - S3, SES, SNS, SQS integration

@@ -23,7 +23,7 @@ type PostgresOrderRepository struct {
 func NewPostgresOrderRepository(db *sqlx.DB) *PostgresOrderRepository {
 	return &PostgresOrderRepository{
 		db:     db,
-		schema: "grpc_kata",
+		schema: "order_schema",
 	}
 }
 

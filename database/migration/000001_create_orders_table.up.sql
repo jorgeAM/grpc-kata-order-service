@@ -1,6 +1,6 @@
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS grpc_kata.orders
+CREATE TABLE IF NOT EXISTS order_schema.orders
 (
     id uuid PRIMARY KEY,
     customer_id VARCHAR(50) NOT NULL,

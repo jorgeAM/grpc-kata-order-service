@@ -1,5 +1,5 @@
 BEGIN;
 
-DROP TABLE IF EXISTS grpc_kata.orders;
+DROP TABLE IF EXISTS order_schema.orders;
 
 COMMIT;
