@@ -16,7 +16,8 @@ type OrderGrpcServer struct {
 
 func NewOrderGrpcServer(createOrderApp *command.CreateOrder) *OrderGrpcServer {
 	return &OrderGrpcServer{
-		createOrderApp: createOrderApp,
+		createOrderApp:                  createOrderApp,
+		UnimplementedOrderServiceServer: &orderpb.UnimplementedOrderServiceServer{},
 	}
 }
 
