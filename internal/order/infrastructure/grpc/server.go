@@ -10,11 +10,11 @@ import (
 var _ orderpb.OrderServiceServer = (*OrderGrpcServer)(nil)
 
 type OrderGrpcServer struct {
-	createOrderApp command.CreateOrder
+	createOrderApp *command.CreateOrder
 	*orderpb.UnimplementedOrderServiceServer
 }
 
-func NewOrderGrpcServer(createOrderApp command.CreateOrder) *OrderGrpcServer {
+func NewOrderGrpcServer(createOrderApp *command.CreateOrder) *OrderGrpcServer {
 	return &OrderGrpcServer{
 		createOrderApp: createOrderApp,
 	}

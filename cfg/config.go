@@ -3,7 +3,9 @@ package config
 import "github.com/jorgeAM/grpc-kata-order-service/pkg/env"
 
 type Config struct {
+	AppEnv                     string
 	Port                       string
+	GrpcPort                   string
 	PostgresHost               string
 	PostgresPort               int
 	PostgresDatabase           string
@@ -15,7 +17,9 @@ type Config struct {
 
 func LoadConfig() (*Config, error) {
 	return &Config{
+		AppEnv:                     env.GetEnv("APP_ENV", "local"),
 		Port:                       env.GetEnv("PORT", "8080"),
+		GrpcPort:                   env.GetEnv("GRPC_PORT", "9090"),
 		PostgresHost:               env.GetEnv("POSTGRES_HOST", "localhost"),
 		PostgresPort:               env.GetEnv("POSTGRES_PORT", 5432),
 		PostgresDatabase:           env.GetEnv("POSTGRES_DB", "db"),
