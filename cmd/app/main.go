@@ -18,7 +18,6 @@ func startServer(cfg *config.Config, deps *config.Dependencies) error {
 	router := buildRouter(cfg, deps)
 
 	return http.ListenAndServe(fmt.Sprintf(":%s", cfg.Port), router)
-
 }
 
 func main() {
@@ -47,11 +46,20 @@ func main() {
 	log.Info(ctx, "[Dependencies] Finished")
 
 	log.Info(ctx, "[App] Initializing")
+
 	go func() {
-		log.Info(ctx, fmt.Sprintf("[Server] Listening on %s", cfg.Port))
+		log.Info(ctx, fmt.Sprintf("[HTTP Server] Listening on %s", cfg.Port))
 
 		if err := startServer(cfg, deps); err != nil {
-			log.Panic(ctx, "error starting server", log.WithError(err))
+			log.Panic(ctx, "error starting HTTP server", log.WithError(err))
+		}
+	}()
+
+	go func() {
+		log.Info(ctx, fmt.Sprintf("[gRPC Server] Listening on %s", cfg.GrpcPort))
+
+		if err := StartGRPCServer(cfg, deps); err != nil {
+			log.Panic(ctx, "error starting gRPC server", log.WithError(err))
 		}
 	}()
 
