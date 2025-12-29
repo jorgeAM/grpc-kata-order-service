@@ -18,7 +18,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
-	github.com/jorgeAM/grpc-kata-proto v1.0.2
+	github.com/jorgeAM/grpc-kata-proto v1.0.5
 	github.com/lib/pq v1.10.9
 	github.com/sendgrid/sendgrid-go v3.16.1+incompatible
 	go.uber.org/mock v0.5.0
