@@ -37,3 +37,12 @@ func NewOrder(customerID model.ID) *Order {
 func (o *Order) AddItem(item OrderItem) {
 	o.Items = append(o.Items, item)
 }
+
+func (o *Order) Total() float64 {
+	var total float64
+	for _, item := range o.Items {
+		total += item.UnitPrice * float64(item.Quantity)
+	}
+
+	return total
+}

@@ -21,7 +21,7 @@ func StartGRPCServer(cfg *config.Config, deps *config.Dependencies) error {
 	var opts []grpc.ServerOption
 
 	orderGrpcServer := ordergrpc.NewOrderGrpcServer(
-		command.NewCreateOrder(deps.OrderRepository),
+		command.NewCreateOrder(deps.OrderRepository, deps.PaymentPort),
 	)
 
 	grpcServer := grpc.NewServer(opts...)

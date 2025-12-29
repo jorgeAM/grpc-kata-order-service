@@ -10,7 +10,7 @@ import (
 )
 
 func CreateOrder(_ *config.Config, deps *config.Dependencies) http.HandlerFunc {
-	srv := command.NewCreateOrder(deps.OrderRepository)
+	srv := command.NewCreateOrder(deps.OrderRepository, deps.PaymentPort)
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var body command.CreateOrderCommand

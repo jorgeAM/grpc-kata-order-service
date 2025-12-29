@@ -6,6 +6,7 @@ type Config struct {
 	AppEnv                     string
 	Port                       string
 	GrpcPort                   string
+	PaymentGRPCUrl             string
 	PostgresHost               string
 	PostgresPort               int
 	PostgresDatabase           string
@@ -20,6 +21,7 @@ func LoadConfig() (*Config, error) {
 		AppEnv:                     env.GetEnv("APP_ENV", "local"),
 		Port:                       env.GetEnv("PORT", "8080"),
 		GrpcPort:                   env.GetEnv("GRPC_PORT", "9090"),
+		PaymentGRPCUrl:             env.GetEnv("PAYMENT_GRPC_URL", "localhost:9091"),
 		PostgresHost:               env.GetEnv("POSTGRES_HOST", "localhost"),
 		PostgresPort:               env.GetEnv("POSTGRES_PORT", 5432),
 		PostgresDatabase:           env.GetEnv("POSTGRES_DB", "db"),

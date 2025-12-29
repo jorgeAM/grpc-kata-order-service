@@ -3,6 +3,7 @@ package command
 import (
 	"context"
 
+	"github.com/jorgeAM/grpc-kata-order-service/internal/order/application/port"
 	"github.com/jorgeAM/grpc-kata-order-service/internal/order/domain"
 	"github.com/jorgeAM/grpc-kata-order-service/pkg/model"
 )
@@ -20,11 +21,13 @@ type CreateOrderCommand struct {
 
 type CreateOrder struct {
 	orderRepository domain.OrderRepository
+	paymentClient   port.PaymentPort
 }
 
-func NewCreateOrder(orderRepository domain.OrderRepository) *CreateOrder {
+func NewCreateOrder(orderRepository domain.OrderRepository, paymentClient port.PaymentPort) *CreateOrder {
 	return &CreateOrder{
 		orderRepository: orderRepository,
+		paymentClient:   paymentClient,
 	}
 }
 
@@ -41,6 +44,10 @@ func (c *CreateOrder) Exec(ctx context.Context, cmd *CreateOrderCommand) (string
 	}
 
 	if err := c.orderRepository.Save(ctx, order); err != nil {
+		return "", err
+	}
+
+	if err := c.paymentClient.Charge(ctx, order); err != nil {
 		return "", err
 	}
 
