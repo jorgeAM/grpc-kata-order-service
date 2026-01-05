@@ -1,5 +1,7 @@
 BEGIN;
 
+CREATE SCHEMA IF NOT EXISTS order_schema;
+
 CREATE TABLE IF NOT EXISTS order_schema.orders
 (
     id uuid PRIMARY KEY,
